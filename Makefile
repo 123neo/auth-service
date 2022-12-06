@@ -24,5 +24,5 @@ down:
 ## build_auth: builds the auth binary as a linux executable
 build_connect:
 	@echo Building auth binary...
-	chdir ..\user-service && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${CONNECT_BINARY} ./cmd
+	chdir ..\auth-service && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${CONNECT_BINARY} ./cmd
 	@echo Done!

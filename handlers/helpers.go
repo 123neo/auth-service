@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"auth-service/models"
 	"encoding/json"
 	"io"
 	"net/http"
-	"user-service/models"
 )
 
 func decodeCreateUserRequest(w http.ResponseWriter, r *http.Request, user *models.User) error {

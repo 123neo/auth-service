@@ -1,6 +1,8 @@
 package main
 
 import (
+	"auth-service/config"
+	"auth-service/repository"
 	"context"
 	"database/sql"
 	"log"
@@ -8,8 +10,6 @@ import (
 	"os"
 	"os/signal"
 	"time"
-	"user-service/config"
-	"user-service/repository"
 
 	_ "github.com/lib/pq"
 )

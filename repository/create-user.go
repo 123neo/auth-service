@@ -1,10 +1,10 @@
 package repository
 
 import (
+	"auth-service/models"
 	"context"
 	"database/sql"
 	"log"
-	"user-service/models"
 )
 
 type Repo struct {

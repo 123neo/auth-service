@@ -1,10 +1,10 @@
 package services
 
 import (
+	"auth-service/models"
+	"auth-service/repository"
 	"context"
 	"log"
-	"user-service/models"
-	"user-service/repository"
 
 	"github.com/gofrs/uuid"
 )

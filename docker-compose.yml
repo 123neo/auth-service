@@ -3,8 +3,8 @@ version: "3"
 services:
   user-service:
     build:
-      context: ./../user-service
-      dockerfile: ./../user-service/user-service.dockerfile
+      context: ./../auth-service
+      dockerfile: ./../auth-service/auth-service.dockerfile
     restart: always
     ports:
       - "8081:8080"

@@ -1,6 +1,6 @@
 package handlers
 
-import "user-service/models"
+import "auth-service/models"
 
 // CreateUserRequest holds the request parameters for the Create User method.
 type CreateUserRequest struct {

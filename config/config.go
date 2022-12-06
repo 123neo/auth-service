@@ -1,9 +1,9 @@
 package config
 
 import (
+	"auth-service/repository"
 	"database/sql"
 	"log"
-	"user-service/repository"
 )
 
 type Config struct {

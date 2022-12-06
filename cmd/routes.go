@@ -1,9 +1,9 @@
 package main
 
 import (
+	"auth-service/config"
+	"auth-service/handlers"
 	"net/http"
-	"user-service/config"
-	"user-service/handlers"
 )
 
 func routes(app *config.Config) http.Handler {

@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"auth-service/config"
+	"auth-service/models"
+	"auth-service/services"
 	"net/http"
-	"user-service/config"
-	"user-service/models"
-	"user-service/services"
 )
 
 func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
