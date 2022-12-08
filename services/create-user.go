@@ -4,17 +4,17 @@ import (
 	"auth-service/models"
 	"auth-service/repository"
 	"context"
-	"log"
 
 	"github.com/gofrs/uuid"
+	"go.uber.org/zap"
 )
 
 type service struct {
 	repo repository.Repository
-	log  *log.Logger
+	log  *zap.Logger
 }
 
-func NewService(repo repository.Repository, log *log.Logger) Service {
+func NewService(repo repository.Repository, log *zap.Logger) Service {
 	return &service{repo: repo, log: log}
 }
 
@@ -25,7 +25,7 @@ type Service interface {
 func (s *service) CreateUser(ctx context.Context, user models.User) (string, error) {
 	uuid, err := uuid.NewV4()
 	if err != nil {
-		s.log.Println("Error in generating uuid..")
+		s.log.Warn("Error in generating uuid..")
 	}
 	id := uuid.String()
 	user.ID = id

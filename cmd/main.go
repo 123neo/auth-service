@@ -11,23 +11,32 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/asaskevich/govalidator"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 )
 
 // Server start for go
 
 func main() {
-	l := log.New(os.Stdout, "user-service", log.LstdFlags)
+
+	govalidator.SetFieldsRequiredByDefault(true)
+
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
 
 	conn := connectToDB()
 
 	if conn == nil {
-		log.Println("Failed trying to connect Postgres...")
+		logger.Panic("Failed trying to connect Postgres...")
 	}
 
-	repo := repository.NewRepo(conn, l)
+	repo := repository.NewRepo(conn, logger)
 
-	app := config.NewConfig(conn, repo, l)
+	app := config.NewConfig(conn, repo, logger)
 
 	s := &http.Server{
 		Addr:         ":8080",
@@ -41,7 +50,7 @@ func main() {
 	go func() {
 		err := s.ListenAndServe()
 		if err != nil {
-			l.Fatal(err)
+			logger.Error("Error:", zap.Any("Server start error", err))
 		}
 	}()
 
@@ -52,7 +61,7 @@ func main() {
 
 	// This blocks the code until the channel receives some message
 	sig := <-sigChan
-	l.Println("Received terminate, graceful shutdown", sig)
+	logger.Info("Received terminate, graceful shutdown", zap.Any("channel", sig))
 
 	// Once message is consumed shut everything down
 	// Gracefully shuts down all client requests. Makes server more reliable

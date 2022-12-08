@@ -4,15 +4,16 @@ import (
 	"auth-service/models"
 	"context"
 	"database/sql"
-	"log"
+
+	"go.uber.org/zap"
 )
 
 type Repo struct {
 	Db  *sql.DB
-	log *log.Logger
+	log *zap.Logger
 }
 
-func NewRepo(Db *sql.DB, log *log.Logger) Repository {
+func NewRepo(Db *sql.DB, log *zap.Logger) Repository {
 	return &Repo{
 		Db:  Db,
 		log: log,
@@ -28,7 +29,7 @@ func (repo *Repo) CreateUser(ctx context.Context, user models.User) error {
 	INSERT INTO users (user_id, first_name, last_name, email, contact)
 	VALUES ($1, $2, $3, $4, $5)`
 
-	repo.log.Println("User: ", user)
+	repo.log.Info("User:", zap.Any("user struct", user))
 
 	_, err := repo.Db.ExecContext(ctx, sqlStatement, user.ID, user.FirstName, user.LastName, user.Email, user.Contact)
 	if err != nil {

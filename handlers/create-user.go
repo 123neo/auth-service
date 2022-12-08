@@ -5,6 +5,8 @@ import (
 	"auth-service/models"
 	"auth-service/services"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
 func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
@@ -22,8 +24,18 @@ func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
 			user: user,
 		}
 
+		_, errValidate := models.Validate(user)
+
+		app.Log.Info("User:", zap.Any("user struct", user))
+
+		if errValidate != nil {
+			app.Log.Error("Validate Error", zap.Error(errValidate))
+			_ = errorJSON(w, errValidate, http.StatusBadRequest)
+			return
+		}
+
 		if err != nil {
-			app.Log.Println("Error in decoding JSON : ", err)
+			app.Log.Error("Error in decoding JSON : ", zap.Error(err))
 			_ = errorJSON(w, err, http.StatusBadRequest)
 			return
 		}
@@ -34,7 +46,7 @@ func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
 		repsonse, err := service.CreateUser(ctx, requestPaylod.user)
 
 		if err != nil {
-			app.Log.Println("Some error occured: ", err)
+			app.Log.Error("Some error occured: ", zap.Error(err))
 			_ = errorJSON(w, err, http.StatusBadRequest)
 			return
 		}
@@ -48,7 +60,7 @@ func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
 		err = encodeResponse(w, http.StatusAccepted, payload)
 
 		if err != nil {
-			app.Log.Println("Some error occured: ", err)
+			app.Log.Error("Some error occured: ", zap.Error(err))
 			_ = errorJSON(w, err, http.StatusBadRequest)
 			return
 		}
