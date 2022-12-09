@@ -5,15 +5,14 @@ import (
 )
 
 type User struct {
-	ID        string `json: "userId" valid:"-"`
-	FirstName string `json: "firstName" valid:"string"`
-	LastName  string `json: "lastName" valid:"string"`
-	Email     string `json: "email" valid:"string"`
-	Contact   string `json: "contact" valid:"string"`
+	ID        string `json:"userId"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Contact   string `json:"contact"`
 }
 
-func Validate(user User) (bool, error) {
-	// govalidator.SetFieldsRequiredByDefault(true)
+func Validate(user *User) (bool, error) {
 	result, errValidate := govalidator.ValidateStruct(user)
 	if errValidate != nil {
 		return false, errValidate

@@ -11,7 +11,6 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/asaskevich/govalidator"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 )
@@ -19,8 +18,6 @@ import (
 // Server start for go
 
 func main() {
-
-	govalidator.SetFieldsRequiredByDefault(true)
 
 	logger, err := zap.NewProduction()
 	if err != nil {

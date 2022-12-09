@@ -24,7 +24,7 @@ func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
 			user: user,
 		}
 
-		_, errValidate := models.Validate(user)
+		_, errValidate := models.Validate(&user)
 
 		app.Log.Info("User:", zap.Any("user struct", user))
 

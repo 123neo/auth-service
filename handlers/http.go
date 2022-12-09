@@ -9,7 +9,12 @@ type CreateUserRequest struct {
 
 // CreateUserResponse holds the response values for the Create User method.
 type CreateUserResponse struct {
-	Error   bool        `json: "error,omitEmpty"`
-	Message string      `json: "message,omitEmpty"`
-	Data    interface{} `json: "data,omitEmpty"`
+	Error   bool        `json:"error,omitEmpty"`
+	Message string      `json:"message,omitEmpty"`
+	Data    interface{} `json:"data,omitEmpty"`
+}
+
+type LoginRequest struct {
+	email    string
+	passowrd string
 }
