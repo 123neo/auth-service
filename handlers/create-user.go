@@ -18,26 +18,30 @@ func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
 
 		var user models.User
 
-		err := decodeCreateUserRequest(w, r, &user)
-
 		requestPaylod := CreateUserRequest{
-			user: user,
+			user: &user,
 		}
 
-		_, errValidate := models.Validate(&user)
+		if err := decodeCreateUserRequest(w, r, &user); err != nil {
+			app.Log.Error("Error in decoding JSON : ", zap.Error(err))
+			_ = errorJSON(w, err, http.StatusBadRequest)
+			return
+		}
 
 		app.Log.Info("User:", zap.Any("user struct", user))
 
-		if errValidate != nil {
+		if _, errValidate := models.Validate(&user); errValidate != nil {
 			app.Log.Error("Validate Error", zap.Error(errValidate))
 			_ = errorJSON(w, errValidate, http.StatusBadRequest)
 			return
 		}
 
-		if err != nil {
-			app.Log.Error("Error in decoding JSON : ", zap.Error(err))
-			_ = errorJSON(w, err, http.StatusBadRequest)
-			return
+		// encrypting password
+
+		if hashString, err := HashPassword(requestPaylod.user.Password); err != nil {
+			app.Log.Error("Not able to encrypt password", zap.Error(err))
+		} else {
+			requestPaylod.user.Password = hashString
 		}
 
 		// calling the required service
@@ -53,6 +57,7 @@ func CreateHandlerFunc(app *config.Config) http.HandlerFunc {
 
 		// sending the response back to the client
 
+		app.Log.Info("Response: ", zap.Any("response", repsonse))
 		payload := CreateUserResponse{
 			Data: repsonse,
 		}

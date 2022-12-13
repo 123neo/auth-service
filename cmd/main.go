@@ -39,8 +39,8 @@ func main() {
 		Addr:         ":8080",
 		Handler:      routes(app),
 		IdleTimeout:  120 * time.Second,
-		ReadTimeout:  1 * time.Second,
-		WriteTimeout: 1 * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
 	}
 
 	// wrapping ListenAndServe in gofunc so it's not going to block

@@ -1,10 +1,14 @@
 package handlers
 
 import (
+	"auth-service/config"
 	"auth-service/models"
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func decodeCreateUserRequest(w http.ResponseWriter, r *http.Request, user *models.User) error {
@@ -29,21 +33,27 @@ func decodeCreateUserRequest(w http.ResponseWriter, r *http.Request, user *model
 	return nil
 }
 
-func decodeLoginRequest(w http.ResponseWriter, r *http.Request, loginData *LoginRequest) error {
+func decodeLoginRequest(w http.ResponseWriter, r *http.Request, loginData *LoginRequest, app *config.Config) error {
 	maxBytes := 1048576 // one megabyte
+
+	// buf, err := io.ReadAll(r.Body)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// app.Log.Info("Login Request", zap.Any("login body", buf))
 
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))
 
 	dec := json.NewDecoder(r.Body)
 
-	err := dec.Decode(&loginData)
-	if err != nil {
+	if err := dec.Decode(&loginData); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return err
 	}
+	// log.Println(*loginData)
+	app.Log.Info("Login Request", zap.Any("login body", loginData))
 
-	err = dec.Decode(&struct{}{})
-	if err != io.EOF {
+	if err := dec.Decode(&struct{}{}); err != io.EOF {
 		msg := "Request body must only contain a single JSON object"
 		http.Error(w, msg, http.StatusBadRequest)
 	}
@@ -85,4 +95,14 @@ func errorJSON(w http.ResponseWriter, err error, status ...int) error {
 	payload.Message = err.Error()
 
 	return encodeResponse(w, statusCode, payload)
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

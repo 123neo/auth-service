@@ -19,10 +19,11 @@ func NewService(repo repository.Repository, log *zap.Logger) Service {
 }
 
 type Service interface {
-	CreateUser(ctx context.Context, user models.User) (string, error)
+	CreateUser(ctx context.Context, user *models.User) (string, error)
+	GetUserByEmail(ctx context.Context, email string) (int64, error)
 }
 
-func (s *service) CreateUser(ctx context.Context, user models.User) (string, error) {
+func (s *service) CreateUser(ctx context.Context, user *models.User) (string, error) {
 	uuid, err := uuid.NewV4()
 	if err != nil {
 		s.log.Warn("Error in generating uuid..")
